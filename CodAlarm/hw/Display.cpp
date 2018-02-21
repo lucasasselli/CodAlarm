@@ -3,8 +3,8 @@
 void Display::init() {
 
     // Configure SPI
-    DDRB = (1<<DDB3)|(1<<DDB3)|(1<<DDB5); 	// Set SS, MOSI and SCK output, all others input
-    SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0); 	// Enable SPI, Master, set clock rate fclk/16
+    DDRB = (1<<DDB3)| (1<<DDB2) | (1<<DDB5); 	// Set SS, MOSI and SCK output, all others input
+    SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0); 	// Enable SPI, Master, set clock rate fclk/16
 
     // Configure direction
     DDR(PORT_DISPLAY_A0)	= SET_BIT(DDR(PORT_DISPLAY_A0), LINE_DISPLAY_A0);

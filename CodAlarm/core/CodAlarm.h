@@ -1,5 +1,5 @@
-#ifndef COALARM_H_
-#define COALARM_H_
+#ifndef CODALARM_H_
+#define CODALARM_H_
 
 #include "Clock.h"
 #include "../hw/Display.h"
@@ -7,6 +7,9 @@
 
 enum t_state { IDLE, SET_CLOCK1, SET_CLOCK2, SET_ALARM1, SET_ALARM2, RING };
 
+/**
+ *  Wrapper class for the alarm configuration, state and time.
+ */
 class CodAlarm
 {
 	public:	
@@ -33,4 +36,4 @@ class CodAlarm
 };
 
 
-#endif /* COALARM_H_ */
+#endif /* CODALARM_H_ */

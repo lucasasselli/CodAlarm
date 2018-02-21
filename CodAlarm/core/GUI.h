@@ -54,10 +54,23 @@ static const char column[4]     = {0x06, 0x60, 0x06, 0x60};	// Symbol ':'
 static const char bell_left[4]  = {0x11, 0x33, 0x37, 0xF1}; // Left half of bell icon
 static const char bell_right[4] = {0x88, 0xCC, 0xCE, 0xF8}; // Right half of bell icon
 
+/**
+ * Handles the graphical user interface on the display by controlling the Display instance in CodAlarm.
+ */
 class GUI {
 
 public:
+    /**
+     * Class constructor. Used to pass a pointer to an instance of CodAlarm.
+     * \param Pointer to CodAlarm Object instance.
+     * \return 
+     */
     GUI(CodAlarm*);
+
+    /**
+     * Draws the interface on the screen.
+     * \return void
+     */
     void draw();
 
 private:

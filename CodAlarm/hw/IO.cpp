@@ -90,11 +90,11 @@ void IO::countCheckLong() {
     for(int i=0; i<BTN_LONG_CNT; i++) {
         if(pressed[i]) {
             // If button is pressed
-            if(pressed_cnt[i] < LONG_PRESS_TIME) {
+            if(pressed_cnt[i] < LONG_PRESS_N) {
                 // Time not elapsed
                 pressed_cnt[i]++;
             } else {
-                if(pressed_cnt[i] < LONG_PRESS_TIME) {
+                if(pressed_cnt[i] < LONG_PRESS_N) {
                     // Time just elapsed
                     pressed_cnt[i]++;
                     long_handler_array[i]();
