@@ -126,6 +126,11 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
+#############
+## Doxygen
+#############
+
+doxygen
 
 #############
 ## Python

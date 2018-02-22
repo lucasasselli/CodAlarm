@@ -5,7 +5,7 @@ GUI::GUI(CodAlarm* _ca){
 	ca = _ca;
 }
 
-void GUI::_drawSymbol(int pos_x, int pos_y, int c, int scale){
+void GUI::_drawSymbol(int pos_x, int pos_y, t_symbol c, int scale){
 	
 	int width = SIZE_BASE_W;
 	int height = SIZE_BASE_H;
@@ -24,43 +24,43 @@ void GUI::_drawSymbol(int pos_x, int pos_y, int c, int scale){
 			char buf;
 
 			switch(c){
-				case 0:
+				case SYM_0:
 				buf=number_0[block];
 				break;
 
-				case 1:
+				case SYM_1:
 				buf=number_1[block];
 				break;
 
-				case 2:
+				case SYM_2:
 				buf=number_2[block];
 				break;
 
-				case 3:
+				case SYM_3:
 				buf=number_3[block];
 				break;
 
-				case 4:
+				case SYM_4:
 				buf=number_4[block];
 				break;
 
-				case 5:
+				case SYM_5:
 				buf=number_5[block];
 				break;
 
-				case 6:
+				case SYM_6:
 				buf=number_6[block];
 				break;
 
-				case 7:
+				case SYM_7:
 				buf=number_7[block];
 				break;
 
-				case 8:
+				case SYM_8:
 				buf=number_8[block];
 				break;
 
-				case 9:
+				case SYM_9:
 				buf=number_9[block];
 				break;
 				
@@ -111,15 +111,19 @@ void GUI::draw(){
 	int clock_min = ca->clock.getMin();
 	
 	if((ca->state != SET_CLOCK1) | (ca->state != SET_CLOCK1 && _blinkState())){
-		_drawSymbol(17,5, H_DDIG(clock_hour), SCALE_BIG);	// 1st hour digit
-		_drawSymbol(37,5, L_DDIG(clock_hour), SCALE_BIG);	// 2nd hour digit
+		t_symbol hour_h = (t_symbol) (H_DDIG(clock_hour));
+		t_symbol hour_l = (t_symbol) (L_DDIG(clock_hour));
+		_drawSymbol(17,5, hour_h, SCALE_BIG);	// 1st hour digit
+		_drawSymbol(37,5, hour_l, SCALE_BIG);	// 2nd hour digit
 	}
 	
 	_drawSymbol(55,5, SYM_COLUMN, SCALE_BIG);				// Clock column
 	
 	if((ca->state != SET_CLOCK2) | (ca->state != SET_CLOCK2 && _blinkState())){
-		_drawSymbol(73,5, H_DDIG(clock_min), SCALE_BIG);	// 1st min digit
-		_drawSymbol(93,5, L_DDIG(clock_min), SCALE_BIG);	// 2nd min digit
+		t_symbol min_h = (t_symbol) (H_DDIG(clock_min));
+		t_symbol min_l = (t_symbol) (L_DDIG(clock_min));
+		_drawSymbol(73,5, min_h, SCALE_BIG);	// 1st min digit
+		_drawSymbol(93,5, min_l, SCALE_BIG);	// 2nd min digit
 	}
 	
 	if(ca->mode == H12){
@@ -136,15 +140,19 @@ void GUI::draw(){
 	int alarm_min = ca->alarm.getMin();
 		
 	if((ca->state != SET_ALARM1) | (ca->state != SET_ALARM1 && _blinkState())){
-		_drawSymbol(17,43, H_DDIG(alarm_hour), SCALE_BIG);	// 1st hour digit
-		_drawSymbol(27,43, L_DDIG(alarm_hour), SCALE_BIG);	// 2nd hour digit
+		t_symbol hour_h = (t_symbol) (H_DDIG(alarm_hour));
+		t_symbol hour_l = (t_symbol) (L_DDIG(alarm_hour));
+		_drawSymbol(17,43, hour_h, SCALE_BIG);	// 1st hour digit
+		_drawSymbol(27,43, hour_l, SCALE_BIG);	// 2nd hour digit
 	}
 		
 	_drawSymbol(35,43, SYM_COLUMN, SCALE_BIG);				// Alarm column
 		
 	if((ca->state != SET_ALARM2) | (ca->state != SET_ALARM2 && _blinkState())){
-		_drawSymbol(43,43, H_DDIG(alarm_min), SCALE_BIG);	// 1st min digit
-		_drawSymbol(53,43, L_DDIG(alarm_min), SCALE_BIG);	// 2nd min digit
+		t_symbol min_h = (t_symbol) (H_DDIG(alarm_min));
+		t_symbol min_l = (t_symbol) (L_DDIG(alarm_min));
+		_drawSymbol(43,43, min_h, SCALE_BIG);	// 1st min digit
+		_drawSymbol(53,43, min_l, SCALE_BIG);	// 2nd min digit
 	}
 		
 	if(ca->mode == H12){

@@ -6,39 +6,106 @@
 #include "core/CodAlarm.h"
 #include "core/GUI.h"
 
-#define BACKLIGHT_OFF -1
-#define BUZZER_OFF -1
+#define BACKLIGHT_OFF	-1
+#define BUZZER_OFF		-1
 
 //////////////////////////////////////////////////////////////////////////
-// PROTOTYPES
+// FUNCTION PROTOTYPES
 //////////////////////////////////////////////////////////////////////////
 
+/**
+ * Generic button short press, called for every button.
+ * \return void
+ */
 void pressButton();
 
+/**
+ * "Set Alarm" short press event handler.
+ * \return void
+ */
 void pressSetAlarm();
+
+/**
+ * "Set Alarm" long press event handler.
+ * \return void
+ */
 void longSetAlarm();
+
+/**
+ * "Set Clock" short press event handler.
+ * \return void
+ */
 void pressSetClock();
+
+/**
+ * "Set Clock" long press event handler.
+ * \return void
+ */
 void longSetClock();
+
+/**
+ * "Stop Alarm" short press event handler.
+ * \return void
+ */
+void pressStopAlarm();
+
+/**
+ * "Up" short press event handler.
+ * \return void
+ */
 void pressUp();
+
+/**
+ * "Down" short press event handler.
+ * \return void
+ */
 void pressDown();
+
+/**
+ * "Mode" short press event handler.
+ * \return void
+ */
 void pressMode();
+
+/**
+ * "Snooze" short press event handler.
+ * \return void
+ */
 void pressSnooze();
 
+/**
+ * Starts the buzzer by enabling Timer 2 compare interrupt. If the system is
+ * in the RING state, the buzzer rings intermittently until stopped (using switch or stop button),
+ * otherwise produces a single beep.
+ * \return void
+ */
 void startBuzzer();
+
+/**
+ * Stops the buzzer by disabling Timer 2 compare interrupt.
+ * \return void
+ */
 void stopBuzzer();
+
+//////////////////////////////////////////////////////////////////////////
+// GLOBALS
+//////////////////////////////////////////////////////////////////////////
+
+CodAlarm ca;
+GUI gui(&ca);
+
+/** Stores the countdown used for disabling the backlight. */
+int backlight_counter = BACKLIGHT_OFF;
+
+/** Stores the countdown used for disabling the buzzer. */
+int buzzer_counter	  = BUZZER_OFF;
+
+/** Used to make the intermittent beep of the alarm ringing. */
+bool buzzer_state = false;
 
 //////////////////////////////////////////////////////////////////////////
 // MAIN
 //////////////////////////////////////////////////////////////////////////
-
-// Objects
-CodAlarm ca;
-GUI gui(&ca);
-
-// Other
-int backlight_counter = BACKLIGHT_OFF;
-int buzzer_counter = BUZZER_OFF;
-bool buzzer_state = false;
 
 int main(void) {
 	
@@ -67,14 +134,16 @@ int main(void) {
     // Configure button handlers
 	ca.io.setPressHandler(pressButton);
 	
-    ca.io.setPressHandler(BTN_SET_ALARM, pressSetAlarm);
-    ca.io.setPressHandler(BTN_SET_ALARM, pressSetClock);
-    ca.io.setPressHandler(BTN_UP, pressUp);
-    ca.io.setPressHandler(BTN_DOWN, pressDown);
-    ca.io.setPressHandler(BTN_MODE, pressMode);
-    ca.io.setPressHandler(BTN_SNOOZE, pressSnooze);
-    ca.io.setLongHandler(BTN_SET_ALARM, longSetAlarm);
-    ca.io.setLongHandler(BTN_SET_ALARM, longSetClock);
+    ca.io.setPressHandler(SET_ALARM, pressSetAlarm);
+    ca.io.setPressHandler(SET_ALARM, pressSetClock);
+    ca.io.setPressHandler(UP, pressUp);
+    ca.io.setPressHandler(DOWN, pressDown);
+    ca.io.setPressHandler(MODE, pressMode);
+    ca.io.setPressHandler(SNOOZE, pressSnooze);
+	ca.io.setPressHandler(STOP_ALARM, pressStopAlarm);
+	
+    ca.io.setLongHandler(SET_ALARM, longSetAlarm);
+    ca.io.setLongHandler(SET_ALARM, longSetClock);
 
     sei();	// Turn on interrupts
 
@@ -104,7 +173,13 @@ int main(void) {
 // ISRs
 //////////////////////////////////////////////////////////////////////////
 
-// TIMER0 overflow interrupt
+/**
+ * Timer0 overflow interrupt. Used to:
+ * - Check long press
+ * - Backlight timeout
+ * - Buzzer timeout
+ * \return void
+ */
 ISR(TIMER0_OVF_vect)
 {			
 	// Check long press
@@ -132,7 +207,7 @@ ISR(TIMER0_OVF_vect)
 					startBuzzer();		// Also resets buzzer_counter
 				}else {
 					// Stop buzzer timer
-					buzzer_counter = BUZZER_LONG_TIME;
+					buzzer_counter = N_BUZZER_LONG;
 					stopBuzzer();
 				}
 				buzzer_state != buzzer_state;
@@ -145,7 +220,12 @@ ISR(TIMER0_OVF_vect)
 		}
 }
 
-// Timer1 compare interrupt
+/**
+ * Timer1 compare interrupt. Used to:
+ * - Count seconds
+ * - Enable ringing
+ * \return void
+ */
 ISR(TIMER1_COMPA_vect) {
     // Count seconds
     ca.clock.tick();
@@ -171,6 +251,10 @@ ISR(TIMER1_COMPA_vect) {
     }
 }
 
+/**
+ * Timer2 compare interrupt. Used to create the buzzing sound.
+ * \return void
+ */
 ISR(TIMER2_COMPA_vect) {
 	// Bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz!!!!!
 	ca.io.buzz();
@@ -183,9 +267,20 @@ ISR(TIMER2_COMPA_vect) {
 void pressButton() {
 	// Generic short press
 	ca.io.setLight(true);
-	backlight_counter = BACKLIGHT_TIME;
+	backlight_counter = N_BACKLIGHT;
 	
 	startBuzzer();
+}
+
+void pressStopAlarm() {
+	// Generic short press
+	if (ca.state = RING) {
+		// Only if it's ringing
+		ca.state = IDLE;
+		ca.snoozed = false;
+		            
+		stopBuzzer(); // Stop buzzing
+	}
 }
 
 void pressSetAlarm() {
@@ -304,11 +399,11 @@ void startBuzzer(){
 		// Ringing...
 		if(buzzer_counter <= 0 ){
 			// Avoid resetting counter: could be a button pressed while ringing!
-			buzzer_counter = BUZZER_LONG_TIME;
+			buzzer_counter = N_BUZZER_LONG;
 		}
 	}else{
-		// Not ringing...
-		buzzer_counter = BUZZER_LONG_TIME;
+		// Not ringing... Button pressed!
+		buzzer_counter = N_BUZZER_SHORT;
 	}
 	// Activate interrupt
 	TIMSK2 = SET_BIT(TIMSK2, OCIE1A);	// Enable Timer2 CTC interrupt

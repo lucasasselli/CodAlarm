@@ -55,12 +55,34 @@ class Display
 	
 	private:
 	
+	/** Display pixel buffer. */
 	char display_data[16][64]; 	// Don't judge me.
 	
-	void _send(char c);
+	/**
+	 * Sends a single character trough the SPI interface.
+	 * \param c Character to be sent
+	 * \return void
+	 */
+	void _send(char);
 	
+	/**
+	 * Sends a command to the ST7565 controller. DISPLAY_A0 is set to high.
+	 * \param c Command to be sent
+	 * \return void
+	 */
 	void _sendCommand(char c);
+	
+	/**
+	 * Sends a byte of data to the ST7565 controller. DISPLAY_A0 is set to low.
+	 * \param c Data to be sent
+	 * \return void
+	 */
 	void _sendData(char c);
+	
+	/**
+	 * Hard resets the ST7565 controller. DISPLAY_RESET set to high and then low.
+	 * \return void
+	 */
 	void _reset();
 };
 

@@ -5,33 +5,72 @@
 #include "../hw/Display.h"
 #include "../hw/IO.h"
 
-enum t_state { IDLE, SET_CLOCK1, SET_CLOCK2, SET_ALARM1, SET_ALARM2, RING };
+/**
+ * Alarm clock state type.
+ */
+enum t_state { 
+	/** System is idling. */
+	IDLE, 
+	/** Setting clock minutes */
+	SET_CLOCK1, 
+	/** Setting clock hours */
+	SET_CLOCK2, 
+	/** Setting alarm hours */
+	SET_ALARM1,
+	/** Setting alarm minutes */ 
+	SET_ALARM2, 
+	/** Alarm ringing */
+	RING 
+};
 
 /**
- *  Wrapper class for the alarm configuration, state and time.
+ * Wrapper class for the system configuration, state and time.
  */
 class CodAlarm
 {
 	public:	
 	
 	CodAlarm(){
+		// Set defaults
 		state = IDLE;
-		mode = H12;
-		snoozed = false;
+		mode = H24;
+		snoozed = false; 
 	}
 	
-	// Hardware
+	//////////////////////////////////////////////////////////////////////////
+	// HARDWARE
+	//////////////////////////////////////////////////////////////////////////
+	
+	/** Display wrapper instance. */
 	Display display;
+	
+	/** IO wapper instance. */
 	IO io;
 	
-	// Time
+	//////////////////////////////////////////////////////////////////////////
+	// CLOCKS
+	//////////////////////////////////////////////////////////////////////////
+	
+	/** Current clock value. Set by user. */
 	Clock clock;
+	
+	/** Current alarm value. Set by user. */
 	Clock alarm;
+	
+	/** Current clock value. Set by system. */
 	Clock snooze;
 	
-	// State
+	//////////////////////////////////////////////////////////////////////////
+	// STATE
+	//////////////////////////////////////////////////////////////////////////
+	
+	/** Current system state. */
 	t_state state;
+	
+	/** Format of the hour. */
 	t_mode mode;
+	
+	/** True if the Alarm has been snoozed during last ring state. */
 	bool snoozed;
 };
 

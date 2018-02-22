@@ -27,8 +27,8 @@ long Clock::getValue(){
 	return count;
 }
 
-void Clock::sync(Clock c){
-	count = c.getValue();
+void Clock::sync(Clock source){
+	count = source.getValue();
 }
 
 void Clock::setMin(int x){

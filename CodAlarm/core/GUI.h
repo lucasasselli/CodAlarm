@@ -6,29 +6,41 @@
 #include "../constants.h"
 #include "CodAlarm.h"
 
-#define SIZE_BASE_W 4
-#define SIZE_BASE_H 8
-#define SCALE_SMALL 1
-#define SCALE_NORMAL 2
-#define SCALE_BIG 4
-
+/** Returns the units digit for a decimal value */
 #define L_DDIG(x) x%10
+
+/** Returns the tens digit for a decimal value */
 #define H_DDIG(x) x/10
 
-#define SYM_P		10
-#define SYM_A		11
-#define SYM_M		12
-#define SYM_COLUMN	13
-#define SYM_BELL_R	14
-#define SYM_BELL_L	15
+/** Symbol width in pixel  */
+#define SIZE_BASE_W		4
 
-/*
-	CHARACTER ENCODING:
-	Characters are stored in a 4x8 matrix over 4 bytes. They can be rendered in 3 modes:
-	- SCALE_SMALL : No upscaling, 4x8 pixels
-	- SCALE_NORMAL: 2x upscaling, 8x16 pixels
-	- SCALE_BIG	  : 4x upscaling, 16x32 pixels
-*/
+/** Symbol height in pixel */
+#define SIZE_BASE_H		8
+
+#define SCALE_SMALL		1
+#define SCALE_NORMAL	2
+#define SCALE_BIG		4
+
+/** Symbol type */
+enum t_symbol {
+	SYM_0,
+	SYM_1,
+	SYM_2,
+	SYM_3,
+	SYM_4,
+	SYM_5,
+	SYM_6,
+	SYM_7,
+	SYM_8,
+	SYM_9,
+	SYM_P,
+	SYM_A,
+	SYM_M,
+	SYM_COLUMN,
+	SYM_BELL_R,	
+	SYM_BELL_L,	
+};
 
 // Numbers
 static const char number_0[4]   = {0xF9, 0x99, 0x99, 0xF0}; // Number 0
@@ -74,8 +86,30 @@ public:
     void draw();
 
 private:
+	/** Pointer the instance of CodAlarm passed in the constructor */
     CodAlarm* ca;
-    void _drawSymbol(int, int, int, int);
+	
+	
+    /**
+	 * Draws a symbol on the screen at the specified coordinate (upper left corner of the symbol), with
+	 * a given upscale. Each symbol has an aspect ratio of 1:2 and is a 4x8 pixel matrix stored in an array
+	 * of 4 byes. Upscaling allows to have multiple symbol sizes without without encoding multiple symbols; upscaling is
+	 * performed by drawing the same symbol with bigger pixels. Three upscales values are used:
+	 * - SCALE_SMALL  : No upscaling, 4x8 pixels
+	 * - SCALE_NORMAL : 2x upscaling, 8x16 pixels
+	 * - SCALE_BIG	  : 4x upscaling, 16x32 pixels
+     * \param pos_x Horizontal position
+     * \param pos_y Vertical position
+     * \param c Character to be drawn
+     * \param scale Upscale value
+     * \return void
+     */
+    void _drawSymbol(int, int, t_symbol, int);
+	
+    /**
+     * Provides the blinking animation by reading Timer1.
+     * \return bool Commutes periodically.
+     */
     bool _blinkState();
 };
 
